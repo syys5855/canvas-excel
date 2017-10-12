@@ -101,14 +101,23 @@ window.onload = () => {
         let chbtStpos = [DRAW_ST_POS[0], capos[1]],
             chbtEdpos = DRAW_ED_POS;
 
+
+
+
+        let ddatas = handleDrawData(data);
+        drawByhandleData(ctx, ddatas);
+
+        // 画出区域
+        let typeDatas = handleTypesData(ddatas);
+        drawTypeAreaByData(ctx, typeDatas);
+
+
+        ctx.fillStyle = "#000";
         // 画出 染色体
         DrawUtils.drawRoundRect(ctx, chupStpos, chupEdpos, HORIZONTAL_DELTA / 2);
         DrawUtils.drawRoundRect(ctx, chbtStpos, chbtEdpos, HORIZONTAL_DELTA / 2);
         DrawUtils.drawCirlce(ctx, capos, radius);
 
-
-        let ddatas = handleDrawData(data);
-        drawByhandleData(ctx, ddatas);
         console.log(ddatas, data);
 
 
@@ -143,6 +152,7 @@ window.onload = () => {
 
     // 根据处理完的数据画图
     function drawByhandleData(ctx, data) {
+
         data.forEach(dt => {
             let { pos, isEven, textPos, type, no, noPos } = dt,
             edx = pos[0] + HORZIONTAL_LINE_LEN * (isEven ? -1 : 1);
@@ -158,10 +168,44 @@ window.onload = () => {
         });
     }
 
+
+    function drawTypeAreaByData(ctx, data) {
+        let colorObj = {
+            "3A": "red",
+            "3AS": "yellow",
+            "3AL": "yellow",
+        }
+
+        for (let [key, value] of Object.entries(data)) {
+            let upKey = key.toUpperCase();
+            let color = colorObj[upKey];
+            ctx.fillStyle = color;
+            DrawUtils.drawRoundRect(ctx, value.min.pos, [value.max.pos[0] + HORIZONTAL_DELTA, value.max.pos[1]], HORIZONTAL_DELTA / 2, true);
+        }
+
+    }
+
+    // 处理不同区域的数据
+    function handleTypesData(data) {
+        let sortedObj = _.groupBy(data, "type");
+        let result = {};
+
+        for (let [key, value] of Object.entries(sortedObj)) {
+            let min = _.minBy(value, val => val.pos[1]);
+            let max = _.maxBy(value, val => val.pos[1]);
+            result[key] = {
+                datas: value,
+                min,
+                max
+            }
+        }
+        return result;
+
+    }
+
     // 格式化金额
     function _fmoney(s, n) {
         n = n >= 0 && n <= 20 ? n : 2;
-        console.log(n);
         s = n !== 0 ? (parseFloat((s + "").replace(/[^\d\.-]/g, "")).toFixed(n) + "") : (parseInt((s + "")) + "");
         let l = s.split(".")[0].split("").reverse(),
             r = s.split(".")[1],

@@ -1,6 +1,6 @@
 export default {
     // pos:[x,y]
-    drawRoundRect(ctx, ltpos, rbpos, radius) {
+    drawRoundRect(ctx, ltpos, rbpos, radius, isfill = false) {
         let [stx, sty] = ltpos, [edx, edy] = rbpos;
 
         let width = Math.abs(edx - stx),
@@ -18,7 +18,11 @@ export default {
         ctx.lineTo(stx + radius, edy);
         ctx.arc(stx + radius, edy - radius, radius, Math.PI / 2, Math.PI);
         ctx.closePath();
-        ctx.stroke();
+        isfill ? ctx.fill() : ctx.stroke();
+
+
+
+
     },
     drawCirlce(ctx, pos, radius) {
         let [x, y] = pos;
