@@ -1,6 +1,6 @@
 export default {
     // pos:[x,y]
-    drawRoundRect(ctx, ltpos, rbpos, radius, isfill = false) {
+    drawRoundRect(ctx, ltpos, rbpos, radius,radiusBottom = radius, isfill = false) {
         let [stx, sty] = ltpos, [edx, edy] = rbpos;
 
         let width = Math.abs(edx - stx),
@@ -10,19 +10,19 @@ export default {
         ctx.moveTo(stx, sty);
         ctx.closePath();
         ctx.beginPath();
+        // top arc left
         ctx.arc(stx + radius, sty + radius, radius, -Math.PI, -Math.PI / 2, );
-        ctx.lineTo(edx - radius, sty);
-        ctx.arc(edx - radius, sty + radius, radius, -Math.PI / 2, 0);
-        ctx.lineTo(edx, edy - radius);
-        ctx.arc(edx - radius, edy - radius, radius, 0, Math.PI / 2);
-        ctx.lineTo(stx + radius, edy);
-        ctx.arc(stx + radius, edy - radius, radius, Math.PI / 2, Math.PI);
+        ctx.lineTo(edx - radiusBottom, sty);
+        // top arc right
+         ctx.arc(edx - radius, sty + radius, radius, -Math.PI / 2, 0);
+        ctx.lineTo(edx, edy - radiusBottom);
+        // bottom arc right
+        ctx.arc(edx - radiusBottom, edy - radiusBottom, radiusBottom, 0, Math.PI / 2);
+        ctx.lineTo(stx + radiusBottom, edy);
+        // bottom arc left
+        ctx.arc(stx + radiusBottom, edy - radiusBottom, radiusBottom, Math.PI / 2, Math.PI);
         ctx.closePath();
         isfill ? ctx.fill() : ctx.stroke();
-
-
-
-
     },
     drawCirlce(ctx, pos, radius) {
         let [x, y] = pos;
